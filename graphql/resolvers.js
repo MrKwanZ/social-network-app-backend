@@ -57,7 +57,7 @@ module.exports = {
         userId: user._id.toString(),
         email: user.email
       },
-      'somesupersecretsecret',
+      process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
     return { token: token, userId: user._id.toString() };
@@ -223,7 +223,7 @@ module.exports = {
       throw error;
     }
     clearImage(post.imageUrl);
-    await Post.findByIdAndRemove(id);
+    await Post.findByIdAndDelete(id);
     const user = await User.findById(req.userId);
     user.posts.pull(id);
     await user.save();

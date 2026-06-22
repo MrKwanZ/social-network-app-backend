@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const path = require('path');
 
 const express = require('express');
@@ -98,12 +100,17 @@ app.use((error, req, res, next) => {
   res.status(status).json({ message: message, data: data });
 });
 
-mongoose
-  .connect(
-    'mongodb+srv://neil:s2frZWAJXs1pFHWd@cluster0.mc6e3.mongodb.net/messages?retryWrites=true&w=majority'
-  )
-  .then(result => {
-    app.listen(8080);
-  })
-  .catch(err => console.log(err));
+if (require.main === module) {
+  const port = Number(process.env.PORT) || 8080;
 
+  mongoose
+    .connect(process.env.MONGODB_URI)
+    .then(() => {
+      app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+      });
+    })
+    .catch(err => console.log(err));
+}
+
+module.exports = app;
